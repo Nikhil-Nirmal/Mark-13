@@ -78,7 +78,7 @@ function prevPalindrome(d,m,y){
 						console.log(datestr[date]);
 						console.log(dayCounter);
 						run = false;
-                        return [datestr[date],dayCounter];
+                        return [datestr[date],dayCounter-1];
 					}
 				}
 			}
@@ -152,7 +152,7 @@ function nextPalindromeDate(d,m,y){
 						console.log(datestr[date]);
 						console.log(dayCounter);
 						run = false;
-                        return [datestr[date],dayCounter];
+                        return [datestr[date],dayCounter-1];
 					}
 				}
 			}
