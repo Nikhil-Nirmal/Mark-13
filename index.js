@@ -4,9 +4,9 @@ let y,d,m;
 let daysInMonth = {1:31,2:28,3:31,4:30,5:31,6:30,7:31,8:31,9:30,10:31,11:30,12:31};
 let dayCounter = 0;
 let prevdayCounter = 0;
-
+let timerImg = document.getElementById("output");
 function btn_onclick() {
-	let timerImg = document.getElementById("output");
+	
 		timerImg.style.width = '6rem';     
 		timerImg.style.height = '6rem';     
 		timerImg.src = 'loading.gif';     
