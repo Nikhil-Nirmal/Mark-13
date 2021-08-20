@@ -1,32 +1,22 @@
 const input = document.querySelector('.inp');
 const output = document.querySelector('.opt');
-
 let y,d,m;
-daysInMonth = {1:31,2:28,3:31,4:30,5:31,6:30,7:31,8:31,9:30,10:31,11:30,12:31};
-
+let daysInMonth = {1:31,2:28,3:31,4:30,5:31,6:30,7:31,8:31,9:30,10:31,11:30,12:31};
+let dayCounter = 0;
+let prevdayCounter = 0;
 
 function btn_onclick() {
-    console.log('hii');
-    let timerImg = document.getElementById("output");
-    timerImg.style.width = '6rem';     
-    timerImg.style.height = '6rem';     
-    timerImg.src = 'loading.gif';     
-    setTimeout(function(){ 
-        timerImg.style.width = '0rem';     
-        timerImg.style.height = '0rem';     
-    calc(); 
-    }, 3000);
-}
-
-function generateFormat(d,m,y){
-	let f1,f2,f3,f4,f5;
-	f1 = d+m+y;
-    f2 = m+d+y;
-    f3 = y+m+d;
-    f4 = d+m+y[2]+y[3];
-    f5 = m+d+y[2]+y[3];
-    return [f1,f2,f3,f4,f5];
-}
+	let timerImg = document.getElementById("output");
+		timerImg.style.width = '6rem';     
+		timerImg.style.height = '6rem';     
+		timerImg.src = 'loading.gif';     
+		setTimeout(function(){ 
+			timerImg.style.width = '0rem';     
+			timerImg.style.height = '0rem';     
+		calc(); 
+		}, 3000);
+	}
+	
 function isLeap(year){
 	if (year % 400 == 0)
 		return true;
@@ -37,194 +27,243 @@ function isLeap(year){
 	return false;
 
 }
-function isPalindrome(dateStr){
-    let reversedDate = dateStr.split('').reverse().join('');
-    if(dateStr == reversedDate){
-        return true;
-    }
-    return false;
+function generateFormat(d,m,y){
+	let f1,f2,f3,f4,f5;
+	f1 = d+m+y;
+    f2 = m+d+y;
+    f3 = y+m+d;
+    f4 = d+m+y[2]+y[3];
+    f5 = m+d+y[2]+y[3];
+    return [f1,f2,f3,f4,f5];
 }
 
-function prevPalindrome(d,m,y){
-	im = Number(m);
-	id = Number(d);
-	let mm,dd,yy;
-	let dayCounter = 0;
-	let datestr = '';
-	let run = true;
-	let k = Number(y);
-		
-	while (run == true){
-		let days = 0;
-		yy = String(k);
-		//console.log('YY'+yy);
-		// Checking for Month
-		for (let i = im;i>=1;i--){
-			
-			//console.log('MM'+i);
-			// Checking for days			
-			for(let j=id; j>=1;j--){
-				dayCounter+=1;
-				//console.log('DD'+j);
-				
-				if(i >=1 && i<=9){
-					mm = '0'+String(i);	
-					//console.log('0 added to mm'+mm);
-				}
-				else{
-					mm = String(i);
-				}
-				
-				if (j >=1 && j<=9){
-					dd = '0'+String(j);
-					//console.log('0 added to dd'+dd);
-				}
-				else{
-					dd = String(j); 
-				}
-				
-				datestr = generateFormat(dd,mm,yy);
-				//console.log(datestr);
-				
-				for(let date=0; date<datestr.length;date++){
-					//console.log('Format '+date+" "+datestr[date]);
-					
-					if(isPalindrome(datestr[date]) == true){
-						console.log(datestr[date]);
-						console.log(dayCounter);
-						run = false;
-                        return [datestr[date],dayCounter-1];
-					}
-				}
-			}
-			days = daysInMonth[i-1];
-			if (isLeap(k) == true){
-				if(i == 2){
-					days = 28;
-				}
-			}
-			id=days;
+function isPalindrome(dateStr){
+	let reversedDate = dateStr.split("").reverse().join("");
+	if (dateStr == reversedDate){
+		return true;
+	}
+	else{
+		return false;
+	}
+}
+/*
+(5) ["22022022", "02222022", "20220222", "220222", "022222"]
+main.js:72 22022022
+main.js:74 22022022 is Palindrome
+main.js:38 in nextday
+main.js:40 counter : 3
+main.js:68 
+*/
 
+function nextDate(year,month,day){
+	//console.log('in nextday');
+	let dd = null;
+	let mm = null;
+	let yy = null;
+	let newDaysFormat;
+	let days = daysInMonth[month];
+	if(isLeap(year) == true){
+		if(month == 2){
+			days = 29;
 		}
-		k-=1;
-		im = 12;
-		id = 31;
+	}
+	
+	for(let j = day; j<=days;j++){
+		dayCounter++;
+		//console.log('counter : '+dayCounter)
+		dd = String(j);
+		mm= String(month);
+		yy = String(year);
+		//console.log(String(j),String(month),String(year));
 		
+
+		if(j>=1 && j<=9){
+			dd = '0'+ String(j);
+		}
+		if(month>=1 && month<=9){
+			mm = '0'+ String(month);
+		}
+		
+		newDaysFormat = generateFormat(dd,mm,yy);
+		//console.log(newDaysFormat);
+		
+		for(let k = 0; k < newDaysFormat.length; k++){
+			
+			//console.log(newDaysFormat[k]);
+			if (isPalindrome(newDaysFormat[k])){
+				//console.log( newDaysFormat[k] + " is Palindrome")
+				//console.log("back 1")
+				return  newDaysFormat[k];
+			}
+		}
+		
+	}
+}
+
+
+function nextMonth(year,month,day){
+	//console.log('in nextmonth');
+	let returnVal = '';
+	for(let i = month; i<=12; i++){
+		if ( i > month){
+			day = 1;
+		}
+		returnVal = nextDate(year,i,day);
+		//console.log('back 2')
+		if(returnVal != null){
+			return returnVal;
+		} 
 	}
 	
 }
-
 
 function nextPalindromeDate(d,m,y){
-	im = Number(m);
-	id = Number(d);
-	let mm,dd,yy;
-	let dayCounter = 0;
-	let datestr = '';
+	//console.log('in nextpalidnrome');
+	let returnVal = '';
 	let run = true;
-	let k = Number(y);
-		
-	while (run == true){
-		yy = String(k);
-		//console.log('YY'+yy);
-		// Checking for Month
-		for (let i = im;i<=12;i++){
-		//	console.log('MM'+i);
-			let days = daysInMonth[i];
-			if (isLeap(k) == true){
-				if(i == 2){
-					days = 28;
-				}
-			}
-			// Checking for days			
-			for(let j=id; j<=days;j++){
-				dayCounter+=1;
-		//		console.log('DD'+j);
-				
-				if(i >=1 && i<=9){
-					mm = '0'+String(i);	
-		//			console.log('0 added to mm'+mm);
-				}
-				else{
-					mm = String(i);
-				}
-				
-				if (j >=1 && j<=9){
-					dd = '0'+String(j);
-		//			console.log('0 added to dd'+dd);
-				}
-				else{
-					dd = String(j); 
-				}
-				
-				datestr = generateFormat(dd,mm,yy);
-		//		console.log(datestr);
-				
-				for(let date=0; date<datestr.length;date++){
-		//			console.log('Format '+date+" "+datestr[date]);
-					
-					if(isPalindrome(datestr[date]) == true){
-						console.log(datestr[date]);
-						console.log(dayCounter);
-						run = false;
-                        return [datestr[date],dayCounter-1];
-					}
-				}
-			}
-			id=1;
-
+	let year = Number(y);
+	let month = Number(m);
+	let day = Number(d);
+	while(run == true){
+		returnVal = nextMonth(year,month,day);
+		//console.log(returnVal);
+		//console.log("back 3")
+		year++;
+		month = 1;
+		day = 1;
+		if(returnVal != null){
+			return returnVal;
 		}
-		k+=1;
-		id = 1;
-		im = 1;
 	}
 }
 
-function calc() {
-	y='',d='',m='';
-	
-    let flag = false;
-    if (input.value ==""){
-        console.log('1');
-        //output.innerHTML = 'Please enter a date first!!!!';
-    }
-    else{
-        let date1 = input.value.split("-");  
-        y = date1[0];
-        m = date1[1];
-        d = date1[2];
-        
-        let allDates = generateFormat(d,m,y);
-		console.log(allDates)
-        for(let i=0; i<allDates.length; i++){
-			console.log(allDates[i]);
-            if(isPalindrome(allDates[i]) == true){
-                flag = true
-                break;
-            }
-        }
 
-        if (flag == true){
-            console.log('IS palindrome')
-			output.innerHTML = 'Date is palindrome'
-        }
-        else {
-            // find nextPalindromedate(m,d,y)
-            //output.innerHTML = 'Oops not a Palindrome';
-			console.log('Finding next date....................');
-            let next= nextPalindromeDate(d,m,y);
-			let prev= prevPalindrome(d,m,y);
-			let msg = '';
-			if(next[1] < prev[1]){
-				msg = 'Next palindrome date is in future '+next[0]+' you got missed by '+next[1]+' days' 
+
+
+function prevdate(year,month,day){
+	console.log('in prevday');
+	let dd = null;
+	let mm = null;
+	let yy = null;
+	let newDaysFormat;
+	let days = daysInMonth[month];
+	
+	for(let j = day; j>=1;j--){
+		prevdayCounter++;
+		//console.log('prev counter : '+prevdayCounter)
+		dd = String(j);
+		mm= String(month);
+		yy = String(year);
+		//console.log(String(j),String(month),String(year));
+		
+
+		if(j>=1 && j<=9){
+			dd = '0'+ String(j);
+		}
+		if(month>=1 && month<=9){
+			mm = '0'+ String(month);
+		}
+		
+		newDaysFormat = generateFormat(dd,mm,yy);
+		//console.log(newDaysFormat);
+		for(let k = 0; k < newDaysFormat.length; k++){
+				
+			//console.log(newDaysFormat[k]);
+			if (isPalindrome(newDaysFormat[k])){
+				//console.log( newDaysFormat[k] + " is Palindrome")
+				//console.log("back 1")
+				return  newDaysFormat[k];
 			}
-			else if (next[1] > prev[1]){
-				msg = 'Next palindrome date is in past '+prev[0]+' you got missed by '+prev[1]+' days'
+		}
+	}
+}	
+
+
+function prevMonth(year,month,day){
+	//console.log('in prevmonth');
+	let returnVal = '';
+	for(let i = month; i>=1; i--){
+		if ( i < month){
+			day = daysInMonth[i];
+			if(isLeap(year) == true){
+				if(month == 2){
+					day = 29;
+				}
 			}
-			else{
-				msg = 'Both palindrome dates are far at equal no of days : '+next[0];
-			}
-            output.innerHTML = msg 
-        }
-    }
+		}
+		returnVal = prevdate(year,i,day);
+	//	console.log('back 2')
+		if(returnVal != null){
+			return returnVal;
+		} 
+	}
+	
+}
+
+
+function prevPalindromeDate(d,m,y){
+	//console.log('in prevpalidnrome');
+	let returnVal = '';
+	let run = true;
+	let year = Number(y);
+	let month = Number(m);
+	let day = Number(d);
+	while(run == true){
+		returnVal = prevMonth(year,month,day);
+		//console.log(returnVal);
+		//console.log("back 3")
+		year--;
+		month = 12;
+		day = 31;
+		if(returnVal != null){
+			return returnVal;
+		}
+	}
+}
+
+
+function calc(){
+	let datearr = input.value.split('-');
+	let palindormedate = '';
+	dayCounter = 0;
+	prevdayCounter = 0;
+	console.log(datearr)
+	let flag = false;
+	y = datearr[0];
+	m = datearr[1];
+	d = datearr[2];
+	
+	let allDateFormat = generateFormat(d,m,y);
+	console.log(allDateFormat);
+	
+	for(let i = 0; i<allDateFormat.length; i++){
+		if (isPalindrome(allDateFormat[i])){
+			palindormedate = allDateFormat[i];
+			flag = true;
+			break;
+		}
+	}
+	
+	if(flag == true){
+		output.innerHTML = 'Date is palindrome ' + palindormedate;		
+		console.log('Date is palindrome');	
+	}
+	else{
+		console.log('Not a palindrome');
+		let msg = '';
+
+
+
+		let next = nextPalindromeDate(d,m,y);
+		let prev = prevPalindromeDate(d,m,y);
+		console.log(dayCounter, prevdayCounter);		
+		if(dayCounter < prevdayCounter){
+			msg = 'Next palindorme is : '+next+ '\nYou missed '+ Number(dayCounter-1)+' days'; 
+		}
+		else{
+			msg = 'Previous palindrome is : '+prev+'\nYou missed '+Number(prevdayCounter-1)+' days';
+		}
+		output.innerHTML = msg;
+		console.log(msg);
+	}
 }
